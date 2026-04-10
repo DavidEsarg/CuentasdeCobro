@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="12" prefHeight="580.0" prefWidth="450.0"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.RegistroController">
+    <padding><Insets top="30" left="50" right="50" bottom="30"/></padding>
+    <Label text="Crear cuenta de usuario"
+           style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <HBox spacing="10">
+        <Label text="Nombres:" prefWidth="130"/>
+        <TextField fx:id="txtNombres" promptText="Nombres completos" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Apellidos:" prefWidth="130"/>
+        <TextField fx:id="txtApellidos" promptText="Apellidos completos" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Cédula:" prefWidth="130"/>
+        <TextField fx:id="txtCedula" promptText="Número de cédula" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Entidades:" prefWidth="130"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <TextField fx:id="txtEntidad" promptText="Nombre de entidad"/>
+            <Button text="+ Agregar entidad" onAction="#agregarEntidad"/>
+            <ListView fx:id="lstEntidades" prefHeight="80"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Contratos:" prefWidth="130"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <TextField fx:id="txtContrato" promptText="Número de contrato"/>
+            <Button text="+ Agregar contrato" onAction="#agregarContrato"/>
+            <ListView fx:id="lstContratos" prefHeight="80"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Usuario:" prefWidth="130"/>
+        <TextField fx:id="txtUsuario" promptText="Nombre de usuario" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Contraseña:" prefWidth="130"/>
+        <PasswordField fx:id="txtPassword" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Confirmar contraseña:" prefWidth="130"/>
+        <PasswordField fx:id="txtConfirmar" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <Label fx:id="lblMensaje" style="-fx-text-fill: red;"/>
+    <HBox spacing="10">
+        <Button text="Registrarse" onAction="#registrar"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-pref-width: 150;"/>
+        <Button text="Volver al login" onAction="#volverLogin"/>
+    </HBox>
+</VBox>

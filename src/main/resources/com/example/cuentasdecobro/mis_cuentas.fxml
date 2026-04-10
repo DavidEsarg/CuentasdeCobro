@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.MisCuentasController">
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+    <Label text="Mis Cuentas" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <TableView fx:id="tblMisCuentas" prefHeight="300" prefWidth="600">
+        <columns>
+            <TableColumn fx:id="colNumero" text="Número" prefWidth="100"/>
+            <TableColumn fx:id="colEntidad" text="Entidad" prefWidth="150"/>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
+            <TableColumn fx:id="colValor" text="Valor" prefWidth="120"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox>

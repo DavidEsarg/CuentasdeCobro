@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+    <Label text="Reportes" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <HBox spacing="10">
+        <Label text="Desde:" prefWidth="120"/>
+        <DatePicker/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Hasta:" prefWidth="120"/>
+        <DatePicker/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Tipo:" prefWidth="120"/>
+        <ComboBox promptText="Tipo de reporte"/>
+    </HBox>
+    <HBox spacing="10">
+        <Button text="Generar Reporte" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+    </HBox>
+    <TableView prefHeight="250">
+        <columns>
+            <TableColumn text="Número" prefWidth="100"/>
+            <TableColumn text="Fecha" prefWidth="100"/>
+            <TableColumn text="Valor" prefWidth="100"/>
+            <TableColumn text="Estado" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox>

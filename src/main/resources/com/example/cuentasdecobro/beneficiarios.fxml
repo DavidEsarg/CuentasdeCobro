@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+    <Label text="Beneficiarios" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <HBox spacing="10">
+        <Label text="Nombre:" prefWidth="120"/>
+        <TextField promptText="Nombre del beneficiario"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Identificación:" prefWidth="120"/>
+        <TextField promptText="Número de identificación"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Banco:" prefWidth="120"/>
+        <TextField promptText="Nombre del banco"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Cuenta:" prefWidth="120"/>
+        <TextField promptText="Número de cuenta bancaria"/>
+    </HBox>
+    <HBox spacing="10">
+        <Button text="Agregar" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Cancelar"/>
+    </HBox>
+    <TableView prefHeight="200">
+        <columns>
+            <TableColumn text="Nombre" prefWidth="150"/>
+            <TableColumn text="Identificación" prefWidth="130"/>
+            <TableColumn text="Banco" prefWidth="120"/>
+            <TableColumn text="Cuenta" prefWidth="130"/>
+        </columns>
+    </TableView>
+</VBox>

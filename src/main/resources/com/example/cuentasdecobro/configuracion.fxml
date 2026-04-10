@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+    <Label text="Configuración" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <HBox spacing="10">
+        <Label text="Usuario:" prefWidth="120"/>
+        <TextField promptText="Nombre de usuario"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Email:" prefWidth="120"/>
+        <TextField promptText="Correo electrónico"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Contraseña:" prefWidth="120"/>
+        <PasswordField promptText="Nueva contraseña"/>
+    </HBox>
+    <HBox spacing="10">
+        <Button text="Guardar cambios" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>
