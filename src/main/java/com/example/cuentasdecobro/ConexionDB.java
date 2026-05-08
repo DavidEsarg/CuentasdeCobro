@@ -1,5 +1,8 @@
 package com.example.cuentasdecobro;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,20 +10,30 @@ import java.sql.Statement;
 
 public class ConexionDB {
 
+    // ─── FLAGS ────────────────────────────────────────────────────────────────
     private static final boolean USAR_MYSQL = false;
 
+    // ─── MySQL ────────────────────────────────────────────────────────────────
     private static final String MYSQL_URL  = "jdbc:mysql://172.30.16.36/sistema_cuentas_db";
     private static final String MYSQL_USER = "adespindola16";
     private static final String MYSQL_PASS = "67001316";
 
+    // ─── SQLite ───────────────────────────────────────────────────────────────
     private static final String SQLITE_URL = "jdbc:sqlite:cuentasdecobro.db";
 
+    // ─── MongoDB ──────────────────────────────────────────────────────────────
+    private static final String MONGO_URI = "mongodb://172.30.16.165:27017";
+    private static final String MONGO_DB  = "sistema_cuentas_db";
+
+    private static MongoClient mongoClientInstance = null;
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  MÉTODOS PÚBLICOS
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /** Devuelve la conexión SQL activa (MySQL o SQLite según flag). */
     public static Connection getConexion() {
-        if (USAR_MYSQL) {
-            return conectarMySQL();
-        } else {
-            return conectarSQLite();
-        }
+        return USAR_MYSQL ? conectarMySQL() : conectarSQLite();
     }
 
     public static Connection getConexionMySQL() {
@@ -30,6 +43,36 @@ public class ConexionDB {
     public static Connection getConexionSQLite() {
         return conectarSQLite();
     }
+
+    /**
+     * Devuelve la base de datos MongoDB.
+     * Reutiliza el cliente si ya está abierto (patrón singleton).
+     */
+    public static MongoDatabase getConexionMongo() {
+        if (mongoClientInstance == null) {
+            try {
+                mongoClientInstance = MongoClients.create(MONGO_URI);
+                System.out.println("Conexion exitosa a MongoDB en " + MONGO_URI);
+            } catch (Exception e) {
+                System.out.println("Error MongoDB: " + e.getMessage());
+                return null;
+            }
+        }
+        return mongoClientInstance.getDatabase(MONGO_DB);
+    }
+
+    /** Cierra el cliente Mongo (llamar al cerrar la app). */
+    public static void cerrarMongo() {
+        if (mongoClientInstance != null) {
+            mongoClientInstance.close();
+            mongoClientInstance = null;
+            System.out.println("Conexion MongoDB cerrada.");
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  PRIVADOS – SQL
+    // ══════════════════════════════════════════════════════════════════════════
 
     private static Connection conectarMySQL() {
         try {

@@ -21,9 +21,13 @@ public class InformeController {
     @FXML private VBox vboxObligaciones;
     @FXML private Label lblEvidencias;
 
-    private List<String> obligaciones = new ArrayList<>();
+    private List<String> obligaciones      = new ArrayList<>();
     private List<TextArea> camposActividad = new ArrayList<>();
-    private List<File> archivosEvidencia = new ArrayList<>();
+    private List<File> archivosEvidencia   = new ArrayList<>();
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  BUSCAR CONTRATO EN SECOP
+    // ══════════════════════════════════════════════════════════════════════════
 
     @FXML
     private void buscarContrato() {
@@ -59,15 +63,19 @@ public class InformeController {
         }).start();
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  SUBIR EVIDENCIAS
+    // ══════════════════════════════════════════════════════════════════════════
+
     @FXML
     private void subirEvidencia() {
         FileChooser fc = new FileChooser();
         fc.setTitle("Seleccionar evidencias");
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Todos", "*.jpg", "*.jpeg", "*.png", "*.pdf", "*.docx", "*.doc"),
-                new FileChooser.ExtensionFilter("Imágenes", "*.jpg", "*.jpeg", "*.png"),
+                new FileChooser.ExtensionFilter("Todos", "*.jpg","*.jpeg","*.png","*.pdf","*.docx","*.doc"),
+                new FileChooser.ExtensionFilter("Imágenes", "*.jpg","*.jpeg","*.png"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Word", "*.docx", "*.doc")
+                new FileChooser.ExtensionFilter("Word", "*.docx","*.doc")
         );
         List<File> archivos = fc.showOpenMultipleDialog(null);
         if (archivos != null) {
@@ -78,26 +86,57 @@ public class InformeController {
         }
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  GUARDAR (SQLite + MongoDB) Y GENERAR PDF
+    // ══════════════════════════════════════════════════════════════════════════
+
     @FXML
     private void guardarInforme() {
         if (txtContrato.getText().isEmpty() || camposActividad.isEmpty()) {
             mostrarAlerta("Primero busca un contrato y llena las actividades.");
             return;
         }
-        String contrato = txtContrato.getText().trim();
-        String fecha = LocalDate.now().toString();
 
+        String contrato = txtContrato.getText().trim();
+        String fecha    = LocalDate.now().toString();
+
+        // Recoger textos de actividades
+        List<String> textosActividades = new ArrayList<>();
+        for (TextArea ta : camposActividad) {
+            textosActividades.add(ta.getText());
+        }
+
+        // ── 1. Guardar en SQLite (comportamiento original) ──────────────────
+        guardarEnSQLite(contrato, fecha, textosActividades);
+
+        // ── 2. Guardar informe en MongoDB ────────────────────────────────────
+        MongoService.guardarInforme(contrato, obligaciones, textosActividades);
+
+        // ── 3. Guardar evidencias en MongoDB ─────────────────────────────────
+        MongoService.guardarEvidencias(contrato, archivosEvidencia);
+
+        // ── 4. Generar PDF ───────────────────────────────────────────────────
+        generarPDF(contrato, fecha);
+    }
+
+    private void guardarEnSQLite(String contrato, String fecha, List<String> textosActividades) {
         try (Connection con = ConexionDB.getConexionSQLite()) {
-            String sql1 = "INSERT INTO informe_actividades (numero_contrato, obligacion, actividad_realizada, fecha) VALUES (?, ?, ?, ?)";
+
+            // Informe de actividades
+            String sql1 = "INSERT INTO informe_actividades "
+                    + "(numero_contrato, obligacion, actividad_realizada, fecha) VALUES (?, ?, ?, ?)";
             for (int i = 0; i < obligaciones.size(); i++) {
                 PreparedStatement ps = con.prepareStatement(sql1);
                 ps.setString(1, contrato);
                 ps.setString(2, obligaciones.get(i));
-                ps.setString(3, camposActividad.get(i).getText());
+                ps.setString(3, textosActividades.get(i));
                 ps.setString(4, fecha);
                 ps.executeUpdate();
             }
-            String sql2 = "INSERT INTO evidencias (numero_contrato, nombre_archivo, ruta_archivo, tipo, fecha) VALUES (?, ?, ?, ?, ?)";
+
+            // Evidencias (solo metadatos en SQLite, binarios en Mongo)
+            String sql2 = "INSERT INTO evidencias "
+                    + "(numero_contrato, nombre_archivo, ruta_archivo, tipo, fecha) VALUES (?, ?, ?, ?, ?)";
             for (File f : archivosEvidencia) {
                 PreparedStatement ps = con.prepareStatement(sql2);
                 ps.setString(1, contrato);
@@ -107,11 +146,17 @@ public class InformeController {
                 ps.setString(5, fecha);
                 ps.executeUpdate();
             }
-            generarPDF(contrato, fecha);
+
+            System.out.println("Informe y evidencias guardados en SQLite.");
+
         } catch (SQLException e) {
-            mostrarAlerta("Error al guardar: " + e.getMessage());
+            mostrarAlerta("Error al guardar en SQLite: " + e.getMessage());
         }
     }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  GENERACIÓN DE PDF
+    // ══════════════════════════════════════════════════════════════════════════
 
     private void generarPDF(String contrato, String fecha) {
         try {
@@ -132,7 +177,7 @@ public class InformeController {
             doc.add(new Paragraph(" "));
 
             for (int i = 0; i < obligaciones.size(); i++) {
-                doc.add(new Paragraph("Obligacion " + (i+1) + ": " + obligaciones.get(i), boldFont));
+                doc.add(new Paragraph("Obligacion " + (i + 1) + ": " + obligaciones.get(i), boldFont));
                 String actividad = camposActividad.get(i).getText();
                 doc.add(new Paragraph("Actividad: " +
                         (actividad.isEmpty() ? "Sin actividad registrada" : actividad), normalFont));
@@ -146,19 +191,27 @@ public class InformeController {
             }
 
             doc.close();
-            mostrarExito("PDF generado: " + ruta);
+            mostrarExito("PDF generado: " + ruta
+                    + "\n\nDatos también guardados en MongoDB.");
+
         } catch (Exception e) {
             mostrarAlerta("Error al generar PDF: " + e.getMessage());
         }
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  HELPERS UI
+    // ══════════════════════════════════════════════════════════════════════════
+
     private void mostrarAlerta(String msg) {
         Alert a = new Alert(Alert.AlertType.WARNING);
-        a.setContentText(msg); a.showAndWait();
+        a.setContentText(msg);
+        a.showAndWait();
     }
 
     private void mostrarExito(String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setContentText(msg); a.showAndWait();
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
