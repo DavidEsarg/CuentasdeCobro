@@ -28,9 +28,7 @@ public class VistaPrincipalController {
     private void cargarVista(String fxml) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/example/cuentasdecobro/" + fxml)
-            );
+                    getClass().getResource("/com/example/cuentasdecobro/" + fxml));
             Node vista = loader.load();
             rootPane.setCenter(vista);
         } catch (Exception e) {
@@ -38,39 +36,19 @@ public class VistaPrincipalController {
         }
     }
 
-    @FXML private void handleInicio() {
-        cargarVista("vista_principal.fxml");
-    }
-
-    @FXML private void handleCrearCuenta() {
-        cargarVista("crear_cuenta.fxml");
-    }
-
-    @FXML private void handleMisCuentas() {
-        cargarVista("mis_cuentas.fxml");
-    }
-
-    @FXML private void handleBeneficiarios() {
-        cargarVista("beneficiarios.fxml");
-    }
-
-    @FXML private void handleReportes() {
-        cargarVista("reportes.fxml");
-    }
-
-    @FXML private void handleConfiguracion() {
-        cargarVista("configuracion.fxml");
-    }
+    @FXML private void handleInicio()        { cargarVista("vista_principal.fxml"); }
+    @FXML private void handleCrearCuenta()   { cargarVista("informe.fxml"); }
+    @FXML private void handleMisCuentas()    { cargarVista("mis_cuentas.fxml"); }
+    @FXML private void handleBeneficiarios() { cargarVista("beneficiarios.fxml"); }
+    @FXML private void handleReportes()      { cargarVista("reportes.fxml"); }
+    @FXML private void handleConfiguracion() { cargarVista("configuracion.fxml"); }
 
     @FXML private void cerrarSesion() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/example/cuentasdecobro/login.fxml")
-            );
+                    getClass().getResource("/com/example/cuentasdecobro/login.fxml"));
             javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
-            javafx.stage.Stage stage =
-                    (javafx.stage.Stage) rootPane.getScene().getWindow();
+            javafx.stage.Stage stage = (javafx.stage.Stage) rootPane.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("Login - Sistema de cuentas de cobro");
         } catch (Exception e) {
@@ -78,11 +56,6 @@ public class VistaPrincipalController {
         }
     }
 
-    @FXML private void filtrarCuentas() {
-        System.out.println("Filtrando...");
-    }
-
-    @FXML private void abrirFormulario() {
-        cargarVista("crear_cuenta.fxml");
-    }
+    @FXML private void filtrarCuentas() { System.out.println("Filtrando..."); }
+    @FXML private void abrirFormulario() { cargarVista("informe.fxml"); }
 }

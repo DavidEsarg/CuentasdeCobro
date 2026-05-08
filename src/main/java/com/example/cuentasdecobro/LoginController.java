@@ -7,8 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-// IMPORTANTE: Agregamos las librerías para la conexión
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,8 +23,7 @@ public class LoginController {
         String user = txtUsuario.getText();
         String pass = txtPassword.getText();
 
-        // 1. Validamos contra la base de datos MySQL
-        if (validarAccesoEnBD(user, pass)) {
+        if (validarAcceso(user, pass)) {
             try {
                 FXMLLoader loader = new FXMLLoader(
                         getClass().getResource(
@@ -38,28 +35,21 @@ public class LoginController {
                 stage.setTitle("Sistema de cuentas de cobro");
             } catch (Exception e) {
                 e.printStackTrace();
-                lblMensaje.setText("❌ Error al cargar la vista principal");
+                lblMensaje.setText("Error al cargar la vista principal");
             }
         } else {
-            lblMensaje.setText("❌ Usuario o contraseña incorrectos");
+            lblMensaje.setText("Usuario o contraseña incorrectos");
         }
     }
 
-    // NUEVO MÉTODO: Consulta real a MySQL
-    private boolean validarAccesoEnBD(String user, String pass) {
+    private boolean validarAcceso(String user, String pass) {
         String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND password = ?";
-
         try (Connection con = ConexionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setString(1, user);
             ps.setString(2, pass);
-
             ResultSet rs = ps.executeQuery();
-
-            // Si encuentra una fila, los datos son correctos
             return rs.next();
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

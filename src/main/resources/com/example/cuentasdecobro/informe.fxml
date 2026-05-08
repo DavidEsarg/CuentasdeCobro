@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.cuentasdecobro.InformeController">
+    <content>
+        <VBox spacing="15">
+            <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+            <Label text="Crear Cuenta de Cobro"
+                   style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Separator/>
+            <Label text="1. Informe de Actividades"
+                   style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="txtContrato"
+                           promptText="Número de contrato"
+                           prefWidth="280"/>
+                <Button text="Buscar en SECOP"
+                        onAction="#buscarContrato"
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+            <VBox fx:id="vboxObligaciones" spacing="8"/>
+            <Separator/>
+            <Label text="2. Evidencias"
+                   style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+            <Button text="Subir archivos (JPG, PNG, PDF, Word)"
+                    onAction="#subirEvidencia"
+                    style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Label fx:id="lblEvidencias"
+                   text="Sin archivos seleccionados"
+                   style="-fx-text-fill: gray;" wrapText="true"/>
+            <Separator/>
+            <Button text="Guardar y Generar PDF"
+                    onAction="#guardarInforme"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-pref-width: 250;"/>
+        </VBox>
+    </content>
+</ScrollPane>

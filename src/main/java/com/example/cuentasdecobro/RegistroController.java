@@ -7,11 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import java.util.ArrayList;
-// IMPORTANTE: Agregamos estas librerías para MySQL
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class RegistroController {
 
@@ -28,7 +27,7 @@ public class RegistroController {
     @FXML private Label lblMensaje;
 
     private ObservableList<String> entidades = FXCollections.observableArrayList();
-    private ObservableList<String> contratos = FXCollections.observableArrayList();
+    private ObservableList<String> contratos  = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -38,73 +37,56 @@ public class RegistroController {
 
     @FXML
     private void agregarEntidad() {
-        String entidad = txtEntidad.getText().trim();
-        if (!entidad.isEmpty()) {
-            entidades.add(entidad);
-            txtEntidad.clear();
-        }
+        String e = txtEntidad.getText().trim();
+        if (!e.isEmpty()) { entidades.add(e); txtEntidad.clear(); }
     }
 
     @FXML
     private void agregarContrato() {
-        String contrato = txtContrato.getText().trim();
-        if (!contrato.isEmpty()) {
-            contratos.add(contrato);
-            txtContrato.clear();
-        }
+        String c = txtContrato.getText().trim();
+        if (!c.isEmpty()) { contratos.add(c); txtContrato.clear(); }
     }
 
     @FXML
     private void registrar() {
         if (txtNombres.getText().isEmpty() || txtApellidos.getText().isEmpty() ||
-                txtCedula.getText().isEmpty() || txtUsuario.getText().isEmpty() ||
-                txtPassword.getText().isEmpty() || entidades.isEmpty() ||
-                contratos.isEmpty()) {
-            lblMensaje.setText("❌ Completa todos los campos.");
+                txtCedula.getText().isEmpty()  || txtUsuario.getText().isEmpty()   ||
+                txtPassword.getText().isEmpty()|| entidades.isEmpty() || contratos.isEmpty()) {
+            lblMensaje.setText("Completa todos los campos.");
             return;
         }
-
         if (!txtPassword.getText().equals(txtConfirmar.getText())) {
-            lblMensaje.setText("❌ Las contraseñas no coinciden.");
+            lblMensaje.setText("Las contraseñas no coinciden.");
             return;
         }
 
-        // --- INICIO DE CONEXIÓN A BASE DE DATOS ---
         String sql = "INSERT INTO usuarios (nombre_usuario, password, nombres, apellidos, cedula) VALUES (?, ?, ?, ?, ?)";
-
         try (Connection con = ConexionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setString(1, txtUsuario.getText());
             ps.setString(2, txtPassword.getText());
             ps.setString(3, txtNombres.getText());
             ps.setString(4, txtApellidos.getText());
             ps.setString(5, txtCedula.getText());
-
             ps.executeUpdate();
-            // --- FIN DE CONEXIÓN A BASE DE DATOS ---
 
-            Usuario nuevo = new Usuario(
-                    txtUsuario.getText(),
-                    txtPassword.getText(),
-                    txtNombres.getText(),
-                    txtApellidos.getText(),
+            UsuarioService.getInstancia().registrar(new Usuario(
+                    txtUsuario.getText(), txtPassword.getText(),
+                    txtNombres.getText(), txtApellidos.getText(),
                     txtCedula.getText(),
                     new ArrayList<>(entidades),
                     new ArrayList<>(contratos)
-            );
-
-            UsuarioService.getInstancia().registrar(nuevo);
+            ));
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Éxito");
-            alert.setContentText("✅ Usuario guardado en la Base de Datos. Ya puedes iniciar sesión.");
+            alert.setTitle("Exito");
+            alert.setContentText("Usuario registrado. Ya puedes iniciar sesion.");
             alert.showAndWait();
             volverLogin();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            lblMensaje.setText("❌ Error al guardar en DB: " + e.getMessage());
+            lblMensaje.setText("Error al registrar: " + e.getMessage());
         }
     }
 
@@ -112,8 +94,7 @@ public class RegistroController {
     private void volverLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/example/cuentasdecobro/login.fxml")
+                    getClass().getResource("/com/example/cuentasdecobro/login.fxml")
             );
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) txtUsuario.getScene().getWindow();
