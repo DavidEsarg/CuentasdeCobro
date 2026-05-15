@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<HBox spacing="0" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.RevisorController">
+
+    <!-- PANEL IZQUIERDO: lista de cuentas -->
+    <VBox spacing="10" HBox.hgrow="ALWAYS">
+        <padding><Insets top="20" left="20" right="10" bottom="20"/></padding>
+
+        <Label text="Revisión de Cuentas de Cobro"
+               style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <TextField fx:id="txtBuscar"
+                       promptText="Buscar por número, contratista o entidad..."
+                       prefWidth="280"/>
+            <ComboBox fx:id="cmbFiltroEstado" prefWidth="130"/>
+            <Button text="Filtrar" onAction="#filtrar"
+                    style="-fx-background-color: #1A3A5C; -fx-text-fill: white;"/>
+            <Button text="↻ Actualizar" onAction="#actualizar"/>
+        </HBox>
+
+        <TableView fx:id="tblCuentas" VBox.vgrow="ALWAYS" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="colNumero"      text="N° Cuenta"    prefWidth="120"/>
+                <TableColumn fx:id="colContratista" text="Contratista"  prefWidth="140"/>
+                <TableColumn fx:id="colEntidad"     text="Entidad"      prefWidth="130"/>
+                <TableColumn fx:id="colFecha"       text="Fecha"        prefWidth="90"/>
+                <TableColumn fx:id="colValor"       text="Valor"        prefWidth="90"/>
+                <TableColumn fx:id="colEstado"      text="Estado"       prefWidth="90"/>
+            </columns>
+        </TableView>
+
+        <Label fx:id="lblTotal" text="Total: 0 cuentas"
+               style="-fx-text-fill: gray;"/>
+    </VBox>
+
+    <Separator orientation="VERTICAL"/>
+
+    <!-- PANEL DERECHO: detalle y correcciones -->
+    <VBox fx:id="panelDetalle" spacing="10" prefWidth="320"
+          style="-fx-background-color: #F8F9FA;">
+        <padding><Insets top="20" left="15" right="20" bottom="20"/></padding>
+
+        <Label text="Detalle de la cuenta"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+        <Separator/>
+
+        <HBox spacing="8">
+            <Label text="N° Cuenta:" style="-fx-font-weight: bold;" prefWidth="100"/>
+            <Label fx:id="lblNumeroCuenta"/>
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Contratista:" style="-fx-font-weight: bold;" prefWidth="100"/>
+            <Label fx:id="lblContratista" wrapText="true"/>
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Entidad:" style="-fx-font-weight: bold;" prefWidth="100"/>
+            <Label fx:id="lblEntidad" wrapText="true"/>
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Fecha:" style="-fx-font-weight: bold;" prefWidth="100"/>
+            <Label fx:id="lblFecha"/>
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Valor:" style="-fx-font-weight: bold;" prefWidth="100"/>
+            <Label fx:id="lblValor"
+                   style="-fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+        </HBox>
+
+        <Separator/>
+
+        <Label text="Cambiar estado:"
+               style="-fx-font-weight: bold;"/>
+        <ComboBox fx:id="cmbNuevoEstado" maxWidth="Infinity"/>
+
+        <Label text="Comentario / Corrección:"
+               style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="txtComentario"
+                  promptText="Escribe aquí las correcciones o comentarios para el contratista..."
+                  prefHeight="90" wrapText="true"/>
+
+        <Button text="✔ Aplicar cambios" onAction="#aplicarCambios"
+                maxWidth="Infinity"
+                style="-fx-background-color: #1A3A5C; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-pref-height: 36;"/>
+
+        <Separator/>
+
+        <Label text="Historial de revisiones:"
+               style="-fx-font-weight: bold;"/>
+        <ListView fx:id="lstComentarios" prefHeight="160"
+                  style="-fx-font-size: 10;"/>
+    </VBox>
+</HBox>

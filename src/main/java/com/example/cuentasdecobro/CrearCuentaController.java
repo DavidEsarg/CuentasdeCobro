@@ -2,9 +2,7 @@ package com.example.cuentasdecobro;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class CrearCuentaController {
 
@@ -14,25 +12,37 @@ public class CrearCuentaController {
     @FXML private DatePicker dpFecha;
     @FXML private TextField txtValor;
     @FXML private ComboBox<String> cmbEstado;
+    @FXML private Label lblMensaje;
 
     @FXML
     public void initialize() {
         cmbEstado.getItems().addAll("Pendiente", "Aprobada", "Rechazada", "Pagada");
+        cmbEstado.setValue("Pendiente");
+        int consecutivo = ValidadorColombia.obtenerSiguienteConsecutivo();
+        txtNumero.setText(ValidadorColombia.generarNumeroCuenta(consecutivo));
+        txtNumero.setEditable(false);
+        txtNumero.setStyle("-fx-background-color: #f0f0f0;");
+        if (SesionActual.get() != null) {
+            txtFuncionario.setText(
+                    SesionActual.get().getNombres() + " " + SesionActual.get().getApellidos());
+        }
     }
 
     @FXML
     private void guardar() {
-        if (txtNumero.getText().isEmpty() || txtFuncionario.getText().isEmpty() ||
-                txtEntidad.getText().isEmpty() || dpFecha.getValue() == null ||
-                txtValor.getText().isEmpty()   || cmbEstado.getValue() == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Campos incompletos");
-            alert.setContentText("Por favor completa todos los campos.");
-            alert.showAndWait();
+        if (txtFuncionario.getText().isBlank() || txtEntidad.getText().isBlank() ||
+                dpFecha.getValue() == null || txtValor.getText().isBlank()) {
+            lblMensaje.setText("Completa todos los campos.");
+            lblMensaje.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        String sql = "INSERT INTO cuentas (numero_cuenta, funcionario_receptor, nombre_entidad, fecha_emision, valor, estado) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = """
+            INSERT INTO cuentas
+            (numero_cuenta, funcionario_receptor, nombre_entidad,
+             fecha_emision, valor, estado)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
         try (Connection con = ConexionDB.getConexionSQLite();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, txtNumero.getText());
@@ -46,31 +56,33 @@ public class CrearCuentaController {
             CuentaService.getInstancia().agregarCuenta(new Cuenta(
                     txtNumero.getText(), txtFuncionario.getText(),
                     txtEntidad.getText(), dpFecha.getValue(),
-                    txtValor.getText(), cmbEstado.getValue()
-            ));
+                    txtValor.getText(), cmbEstado.getValue()));
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Exito");
-            alert.setContentText("Cuenta guardada correctamente.");
-            alert.showAndWait();
+            HistorialService.registrarCambio(txtNumero.getText(), "CREACION",
+                    "Cuenta creada por " + (SesionActual.get() != null ?
+                            SesionActual.get().getNombreUsuario() : "sistema"),
+                    SesionActual.get() != null ?
+                            SesionActual.get().getNombreUsuario() : "sistema");
+
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setContentText("Cuenta " + txtNumero.getText() + " creada correctamente.");
+            a.showAndWait();
             limpiar();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Error al guardar: " + e.getMessage());
-            alert.showAndWait();
+        } catch (Exception e) {
+            lblMensaje.setText("Error: " + e.getMessage());
+            lblMensaje.setStyle("-fx-text-fill: red;");
         }
     }
 
     @FXML private void cancelar() { limpiar(); }
 
     private void limpiar() {
-        txtNumero.clear();
-        txtFuncionario.clear();
+        int consecutivo = ValidadorColombia.obtenerSiguienteConsecutivo();
+        txtNumero.setText(ValidadorColombia.generarNumeroCuenta(consecutivo));
         txtEntidad.clear();
         dpFecha.setValue(null);
         txtValor.clear();
-        cmbEstado.setValue(null);
+        cmbEstado.setValue("Pendiente");
+        lblMensaje.setText("");
     }
 }

@@ -4,8 +4,6 @@ module com.example.cuentasdecobro {
     requires java.sql;
     requires org.xerial.sqlitejdbc;
     requires itextpdf;
-
-    // MongoDB
     requires org.mongodb.driver.sync.client;
     requires org.mongodb.driver.core;
     requires org.mongodb.bson;

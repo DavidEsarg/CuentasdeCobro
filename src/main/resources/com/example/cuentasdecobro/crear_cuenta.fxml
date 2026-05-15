@@ -3,39 +3,49 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<VBox spacing="15" xmlns="http://javafx.com/javafx/8"
+<VBox spacing="14" prefWidth="500"
+      xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.cuentasdecobro.CrearCuentaController">
-    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
-    <Label text="Crear Cuenta de Cobro"
-           style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-    <HBox spacing="10">
-        <Label text="Número:" prefWidth="120"/>
-        <TextField fx:id="txtNumero" promptText="Número de cuenta"/>
+    <padding><Insets top="25" left="30" right="30" bottom="25"/></padding>
+
+    <Label text="Nueva Cuenta de Cobro"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+    <Separator/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="N° de cuenta:" prefWidth="160"/>
+        <TextField fx:id="txtNumero" prefWidth="220"/>
     </HBox>
-    <HBox spacing="10">
-        <Label text="Funcionario:" prefWidth="120"/>
-        <TextField fx:id="txtFuncionario" promptText="Nombre del funcionario"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Funcionario receptor:" prefWidth="160"/>
+        <TextField fx:id="txtFuncionario" promptText="Nombre completo" prefWidth="220"/>
     </HBox>
-    <HBox spacing="10">
-        <Label text="Entidad:" prefWidth="120"/>
-        <TextField fx:id="txtEntidad" promptText="Nombre de la entidad"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Entidad:" prefWidth="160"/>
+        <TextField fx:id="txtEntidad" promptText="Nombre de la entidad" prefWidth="220"/>
     </HBox>
-    <HBox spacing="10">
-        <Label text="Fecha:" prefWidth="120"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Fecha de emisión:" prefWidth="160"/>
         <DatePicker fx:id="dpFecha"/>
     </HBox>
-    <HBox spacing="10">
-        <Label text="Valor:" prefWidth="120"/>
-        <TextField fx:id="txtValor" promptText="Valor"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Valor ($):" prefWidth="160"/>
+        <TextField fx:id="txtValor" promptText="Ej: 2500000" prefWidth="220"/>
     </HBox>
-    <HBox spacing="10">
-        <Label text="Estado:" prefWidth="120"/>
-        <ComboBox fx:id="cmbEstado" promptText="Seleccione estado"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Estado:" prefWidth="160"/>
+        <ComboBox fx:id="cmbEstado" prefWidth="180"/>
     </HBox>
+
+    <Label fx:id="lblMensaje" wrapText="true"/>
+
     <HBox spacing="10">
-        <Button text="Guardar" onAction="#guardar"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-        <Button text="Cancelar" onAction="#cancelar"/>
+        <Button text="Guardar cuenta" onAction="#guardar"
+                style="-fx-background-color: #27AE60; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-pref-width: 160;"/>
+        <Button text="Cancelar" onAction="#cancelar"
+                style="-fx-background-color: #7F8C8D; -fx-text-fill: white;
+                       -fx-pref-width: 100;"/>
     </HBox>
 </VBox>

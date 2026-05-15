@@ -1,5 +1,7 @@
 package com.example.cuentasdecobro;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -7,52 +9,36 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.TimeUnit;
 
 public class ConexionDB {
 
-    // ─── FLAGS ────────────────────────────────────────────────────────────────
     private static final boolean USAR_MYSQL = false;
-
-    // ─── MySQL ────────────────────────────────────────────────────────────────
-    private static final String MYSQL_URL  = "jdbc:mysql://172.30.16.36/sistema_cuentas_db";
-    private static final String MYSQL_USER = "adespindola16";
-    private static final String MYSQL_PASS = "67001316";
-
-    // ─── SQLite ───────────────────────────────────────────────────────────────
-    private static final String SQLITE_URL = "jdbc:sqlite:cuentasdecobro.db";
-
-    // ─── MongoDB ──────────────────────────────────────────────────────────────
-    private static final String MONGO_URI = "mongodb://172.30.16.165:27017";
-    private static final String MONGO_DB  = "sistema_cuentas_db";
-
+    private static final String MYSQL_URL   = "jdbc:mysql://172.30.16.36/sistema_cuentas_db";
+    private static final String MYSQL_USER  = "adespindola16";
+    private static final String MYSQL_PASS  = "67001316";
+    private static final String SQLITE_URL  = "jdbc:sqlite:cuentasdecobro.db";
+    private static final String MONGO_URI   = "mongodb://172.30.16.165:27017";
+    private static final String MONGO_DB    = "sistema_cuentas_db";
     private static MongoClient mongoClientInstance = null;
 
-    // ══════════════════════════════════════════════════════════════════════════
-    //  MÉTODOS PÚBLICOS
-    // ══════════════════════════════════════════════════════════════════════════
-
-    /** Devuelve la conexión SQL activa (MySQL o SQLite según flag). */
     public static Connection getConexion() {
         return USAR_MYSQL ? conectarMySQL() : conectarSQLite();
     }
+    public static Connection getConexionMySQL()  { return conectarMySQL(); }
+    public static Connection getConexionSQLite() { return conectarSQLite(); }
 
-    public static Connection getConexionMySQL() {
-        return conectarMySQL();
-    }
-
-    public static Connection getConexionSQLite() {
-        return conectarSQLite();
-    }
-
-    /**
-     * Devuelve la base de datos MongoDB.
-     * Reutiliza el cliente si ya está abierto (patrón singleton).
-     */
     public static MongoDatabase getConexionMongo() {
         if (mongoClientInstance == null) {
             try {
-                mongoClientInstance = MongoClients.create(MONGO_URI);
-                System.out.println("Conexion exitosa a MongoDB en " + MONGO_URI);
+                MongoClientSettings settings = MongoClientSettings.builder()
+                        .applyConnectionString(new ConnectionString(MONGO_URI))
+                        .applyToClusterSettings(b -> b.serverSelectionTimeout(3, TimeUnit.SECONDS))
+                        .applyToSocketSettings(b -> b
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS))
+                        .build();
+                mongoClientInstance = MongoClients.create(settings);
             } catch (Exception e) {
                 System.out.println("Error MongoDB: " + e.getMessage());
                 return null;
@@ -61,18 +47,12 @@ public class ConexionDB {
         return mongoClientInstance.getDatabase(MONGO_DB);
     }
 
-    /** Cierra el cliente Mongo (llamar al cerrar la app). */
     public static void cerrarMongo() {
         if (mongoClientInstance != null) {
             mongoClientInstance.close();
             mongoClientInstance = null;
-            System.out.println("Conexion MongoDB cerrada.");
         }
     }
-
-    // ══════════════════════════════════════════════════════════════════════════
-    //  PRIVADOS – SQL
-    // ══════════════════════════════════════════════════════════════════════════
 
     private static Connection conectarMySQL() {
         try {
@@ -91,7 +71,6 @@ public class ConexionDB {
     private static Connection conectarSQLite() {
         try {
             Connection con = DriverManager.getConnection(SQLITE_URL);
-            System.out.println("Conexion exitosa a SQLite");
             crearTablasSQLite(con);
             return con;
         } catch (SQLException e) {
@@ -109,7 +88,8 @@ public class ConexionDB {
                 password TEXT NOT NULL,
                 nombres TEXT NOT NULL,
                 apellidos TEXT NOT NULL,
-                cedula TEXT NOT NULL
+                cedula TEXT NOT NULL,
+                rol TEXT NOT NULL DEFAULT 'contratista'
             )
         """);
         st.execute("""
@@ -142,6 +122,34 @@ public class ConexionDB {
                 fecha TEXT NOT NULL
             )
         """);
-        System.out.println("Tablas SQLite verificadas");
+        st.execute("""
+            CREATE TABLE IF NOT EXISTS beneficiarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL,
+                cedula TEXT UNIQUE NOT NULL,
+                banco TEXT NOT NULL,
+                tipo_cuenta TEXT NOT NULL,
+                numero_cuenta TEXT NOT NULL,
+                email TEXT,
+                telefono TEXT
+            )
+        """);
+        st.execute("""
+            CREATE TABLE IF NOT EXISTS contador_cuentas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ultimo_numero INTEGER NOT NULL DEFAULT 0
+            )
+        """);
+        st.execute("""
+            CREATE TABLE IF NOT EXISTS comentarios_cuenta (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                numero_cuenta TEXT NOT NULL,
+                revisor TEXT NOT NULL,
+                comentario TEXT NOT NULL,
+                fecha TEXT NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'correccion'
+            )
+        """);
+        st.execute("INSERT OR IGNORE INTO contador_cuentas (id, ultimo_numero) VALUES (1, 0)");
     }
 }

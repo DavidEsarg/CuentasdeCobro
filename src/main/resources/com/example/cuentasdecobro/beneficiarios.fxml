@@ -3,35 +3,56 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<VBox spacing="15" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<HBox spacing="15" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.BeneficiariosController">
     <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
-    <Label text="Beneficiarios" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-    <HBox spacing="10">
-        <Label text="Nombre:" prefWidth="120"/>
-        <TextField promptText="Nombre del beneficiario"/>
-    </HBox>
-    <HBox spacing="10">
-        <Label text="Identificación:" prefWidth="120"/>
-        <TextField promptText="Número de identificación"/>
-    </HBox>
-    <HBox spacing="10">
-        <Label text="Banco:" prefWidth="120"/>
-        <TextField promptText="Nombre del banco"/>
-    </HBox>
-    <HBox spacing="10">
-        <Label text="Cuenta:" prefWidth="120"/>
-        <TextField promptText="Número de cuenta bancaria"/>
-    </HBox>
-    <HBox spacing="10">
-        <Button text="Agregar" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-        <Button text="Cancelar"/>
-    </HBox>
-    <TableView prefHeight="200">
-        <columns>
-            <TableColumn text="Nombre" prefWidth="150"/>
-            <TableColumn text="Identificación" prefWidth="130"/>
-            <TableColumn text="Banco" prefWidth="120"/>
-            <TableColumn text="Cuenta" prefWidth="130"/>
-        </columns>
-    </TableView>
-</VBox>
+
+    <!-- LISTA -->
+    <VBox spacing="10" HBox.hgrow="ALWAYS">
+        <Label text="Beneficiarios"
+               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+        <TextField fx:id="txtBuscar" promptText="Buscar por nombre, cédula o banco..."/>
+        <TableView fx:id="tblBeneficiarios" prefHeight="400" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colNombre"   text="Nombre"   prefWidth="140"/>
+                <TableColumn fx:id="colCedula"   text="Cédula"   prefWidth="100"/>
+                <TableColumn fx:id="colBanco"    text="Banco"    prefWidth="120"/>
+                <TableColumn fx:id="colTipo"     text="Tipo"     prefWidth="80"/>
+                <TableColumn fx:id="colCuenta"   text="N° Cuenta" prefWidth="120"/>
+                <TableColumn fx:id="colEmail"    text="Email"    prefWidth="140"/>
+                <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100"/>
+            </columns>
+        </TableView>
+        <HBox spacing="10">
+            <Button text="Eliminar seleccionado" onAction="#eliminar"
+                    style="-fx-background-color: #E74C3C; -fx-text-fill: white;"/>
+            <Button text="Nuevo" onAction="#nuevo"
+                    style="-fx-background-color: #7F8C8D; -fx-text-fill: white;"/>
+        </HBox>
+    </VBox>
+
+    <!-- FORMULARIO -->
+    <VBox spacing="10" prefWidth="260">
+        <Label text="Datos del beneficiario"
+               style="-fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+        <Label text="Nombre completo:"/>
+        <TextField fx:id="txtNombre" promptText="Nombre completo"/>
+        <Label text="Cédula:"/>
+        <TextField fx:id="txtCedula" promptText="Sin puntos ni comas"/>
+        <Label text="Banco:"/>
+        <ComboBox fx:id="cmbBanco" maxWidth="Infinity"/>
+        <Label text="Tipo de cuenta:"/>
+        <ComboBox fx:id="cmbTipo" maxWidth="Infinity"/>
+        <Label text="N° de cuenta bancaria:"/>
+        <TextField fx:id="txtNumeroCuenta" promptText="Número de cuenta"/>
+        <Label text="Email (opcional):"/>
+        <TextField fx:id="txtEmail" promptText="correo@ejemplo.com"/>
+        <Label text="Teléfono (opcional):"/>
+        <TextField fx:id="txtTelefono" promptText="3001234567"/>
+        <Label fx:id="lblMensaje" style="-fx-text-fill: red;" wrapText="true"/>
+        <Button text="Guardar" onAction="#guardar" maxWidth="Infinity"
+                style="-fx-background-color: #1A3A5C; -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+    </VBox>
+</HBox>

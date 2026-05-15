@@ -9,10 +9,6 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
-        // Inicializar colecciones MongoDB (índices) al arrancar la app
-        MongoService.inicializarColecciones();
-
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/com/example/cuentasdecobro/login.fxml")
         );
@@ -24,8 +20,10 @@ public class HelloApplication extends Application {
 
     @Override
     public void stop() {
-        // Cerrar conexión MongoDB al cerrar la app
-        ConexionDB.cerrarMongo();
+        new Thread(() -> {
+            ConexionDB.cerrarMongo();
+            AppLogger.info("SISTEMA", "CIERRE_APP", "Aplicación cerrada.");
+        }).start();
     }
 
     public static void main(String[] args) {

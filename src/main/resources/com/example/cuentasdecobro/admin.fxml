@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.AdminController">
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+
+    <Label text="Panel de Administrador"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+
+    <HBox spacing="20">
+        <Label fx:id="lblTotalUsuarios" text="Total usuarios: 0"
+               style="-fx-font-weight: bold;"/>
+        <Label fx:id="lblTotalCuentas" text="Total cuentas: 0"
+               style="-fx-font-weight: bold;"/>
+        <Button text="Actualizar" onAction="#actualizar"
+                style="-fx-background-color: #1A3A5C; -fx-text-fill: white;"/>
+    </HBox>
+
+    <TableView fx:id="tblUsuarios" prefHeight="350" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colUsuario"   text="Usuario"   prefWidth="120"/>
+            <TableColumn fx:id="colNombres"   text="Nombres"   prefWidth="130"/>
+            <TableColumn fx:id="colApellidos" text="Apellidos" prefWidth="130"/>
+            <TableColumn fx:id="colCedula"    text="Cédula"    prefWidth="120"/>
+            <TableColumn fx:id="colCuentas"   text="# Cuentas" prefWidth="80"/>
+        </columns>
+    </TableView>
+</VBox>

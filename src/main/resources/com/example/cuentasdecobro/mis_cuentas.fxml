@@ -3,18 +3,53 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<VBox spacing="15" xmlns="http://javafx.com/javafx/8"
+<VBox spacing="12" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.cuentasdecobro.MisCuentasController">
     <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
-    <Label text="Mis Cuentas" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-    <TableView fx:id="tblMisCuentas" prefHeight="300" prefWidth="600">
+
+    <Label text="Mis Cuentas de Cobro"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="txtBuscar"
+                   promptText="Buscar en tiempo real..." prefWidth="220"/>
+        <Label text="Estado:"/>
+        <ComboBox fx:id="cmbFiltroEstado" prefWidth="120"/>
+        <Label text="Desde:"/>
+        <DatePicker fx:id="dpDesde"/>
+        <Label text="Hasta:"/>
+        <DatePicker fx:id="dpHasta"/>
+        <Button text="Filtrar" onAction="#filtrar"
+                style="-fx-background-color: #1A3A5C; -fx-text-fill: white;"/>
+        <Button text="Limpiar" onAction="#limpiarFiltros"/>
+    </HBox>
+
+    <TableView fx:id="tblMisCuentas" prefHeight="320" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colNumero" text="Número" prefWidth="100"/>
-            <TableColumn fx:id="colEntidad" text="Entidad" prefWidth="150"/>
-            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
-            <TableColumn fx:id="colValor" text="Valor" prefWidth="120"/>
-            <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+            <TableColumn fx:id="colNumero"      text="Número"      prefWidth="120"/>
+            <TableColumn fx:id="colFuncionario" text="Funcionario"  prefWidth="130"/>
+            <TableColumn fx:id="colEntidad"     text="Entidad"      prefWidth="130"/>
+            <TableColumn fx:id="colFecha"       text="Fecha"        prefWidth="100"/>
+            <TableColumn fx:id="colValor"       text="Valor"        prefWidth="100"/>
+            <TableColumn fx:id="colEstado"      text="Estado"       prefWidth="90"/>
         </columns>
     </TableView>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label fx:id="lblTotal" text="Total: 0 registros"
+               style="-fx-text-fill: gray;"/>
+        <Button text="Editar" onAction="#editarCuenta"
+                style="-fx-background-color: #F39C12; -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+        <Button text="Eliminar" onAction="#eliminarCuenta"
+                style="-fx-background-color: #E74C3C; -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+        <Button text="💬 Ver revisiones" onAction="#verComentarios"
+                style="-fx-background-color: #8E44AD; -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+        <Button text="Generar PDF" onAction="#generarPDFCuenta"
+                style="-fx-background-color: #1A3A5C; -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+    </HBox>
 </VBox>

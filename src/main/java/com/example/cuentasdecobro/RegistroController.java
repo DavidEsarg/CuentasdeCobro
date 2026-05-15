@@ -25,6 +25,7 @@ public class RegistroController {
     @FXML private PasswordField txtPassword;
     @FXML private PasswordField txtConfirmar;
     @FXML private Label lblMensaje;
+    @FXML private ComboBox<String> cmbRol;
 
     private ObservableList<String> entidades = FXCollections.observableArrayList();
     private ObservableList<String> contratos  = FXCollections.observableArrayList();
@@ -33,6 +34,8 @@ public class RegistroController {
     public void initialize() {
         lstEntidades.setItems(entidades);
         lstContratos.setItems(contratos);
+        cmbRol.getItems().addAll("contratista", "revisor");
+        cmbRol.setValue("contratista");
     }
 
     @FXML
@@ -55,19 +58,30 @@ public class RegistroController {
             lblMensaje.setText("Completa todos los campos.");
             return;
         }
+        if (!ValidadorColombia.esCedulaValida(txtCedula.getText())) {
+            lblMensaje.setText("Cédula inválida (6-10 dígitos).");
+            return;
+        }
         if (!txtPassword.getText().equals(txtConfirmar.getText())) {
             lblMensaje.setText("Las contraseñas no coinciden.");
             return;
         }
 
-        String sql = "INSERT INTO usuarios (nombre_usuario, password, nombres, apellidos, cedula) VALUES (?, ?, ?, ?, ?)";
+        String rol = cmbRol.getValue() != null ? cmbRol.getValue() : "contratista";
+
+        String sql = """
+            INSERT INTO usuarios
+            (nombre_usuario, password, nombres, apellidos, cedula, rol)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
         try (Connection con = ConexionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, txtUsuario.getText());
             ps.setString(2, txtPassword.getText());
             ps.setString(3, txtNombres.getText());
             ps.setString(4, txtApellidos.getText());
-            ps.setString(5, txtCedula.getText());
+            ps.setString(5, ValidadorColombia.formatearCedula(txtCedula.getText()));
+            ps.setString(6, rol);
             ps.executeUpdate();
 
             UsuarioService.getInstancia().registrar(new Usuario(
@@ -75,18 +89,22 @@ public class RegistroController {
                     txtNombres.getText(), txtApellidos.getText(),
                     txtCedula.getText(),
                     new ArrayList<>(entidades),
-                    new ArrayList<>(contratos)
+                    new ArrayList<>(contratos),
+                    rol
             ));
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Exito");
-            alert.setContentText("Usuario registrado. Ya puedes iniciar sesion.");
+            alert.setTitle("Éxito");
+            alert.setContentText("Usuario registrado como " + rol + ". Ya puedes iniciar sesión.");
             alert.showAndWait();
             volverLogin();
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            lblMensaje.setText("Error al registrar: " + e.getMessage());
+            if (e.getMessage().contains("UNIQUE")) {
+                lblMensaje.setText("El nombre de usuario ya existe. Elige otro.");
+            } else {
+                lblMensaje.setText("Error: " + e.getMessage());
+            }
         }
     }
 
@@ -94,11 +112,10 @@ public class RegistroController {
     private void volverLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/cuentasdecobro/login.fxml")
-            );
-            Scene scene = new Scene(loader.load());
+                    getClass().getResource("/com/example/cuentasdecobro/login.fxml"));
             Stage stage = (Stage) txtUsuario.getScene().getWindow();
-            stage.setScene(scene);
+            stage.setScene(new Scene(loader.load()));
+            stage.setTitle("Login - MiCCobro");
         } catch (Exception e) {
             e.printStackTrace();
         }

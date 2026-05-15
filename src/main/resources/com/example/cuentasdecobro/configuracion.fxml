@@ -3,22 +3,51 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<VBox spacing="15" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
-    <Label text="Configuración" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+<VBox spacing="15" prefWidth="450"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cuentasdecobro.ConfiguracionController">
+    <padding><Insets top="30" left="40" right="40" bottom="30"/></padding>
+
+    <Label text="Configuración de perfil"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1A3A5C;"/>
+    <Separator/>
+
+    <Label text="Información de la cuenta"
+           style="-fx-font-weight: bold;"/>
     <HBox spacing="10">
-        <Label text="Usuario:" prefWidth="120"/>
-        <TextField promptText="Nombre de usuario"/>
+        <Label text="Usuario:" prefWidth="140"/>
+        <Label fx:id="lblNombreUsuario" style="-fx-font-weight: bold;"/>
     </HBox>
     <HBox spacing="10">
-        <Label text="Email:" prefWidth="120"/>
-        <TextField promptText="Correo electrónico"/>
+        <Label text="Nombre completo:" prefWidth="140"/>
+        <Label fx:id="lblNombreCompleto"/>
     </HBox>
     <HBox spacing="10">
-        <Label text="Contraseña:" prefWidth="120"/>
-        <PasswordField promptText="Nueva contraseña"/>
+        <Label text="Cédula:" prefWidth="140"/>
+        <Label fx:id="lblCedula"/>
     </HBox>
-    <HBox spacing="10">
-        <Button text="Guardar cambios" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+
+    <Separator/>
+    <Label text="Cambiar contraseña"
+           style="-fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Contraseña actual:" prefWidth="170"/>
+        <PasswordField fx:id="txtPasswordActual" prefWidth="200"/>
     </HBox>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Nueva contraseña:" prefWidth="170"/>
+        <PasswordField fx:id="txtPasswordNueva" prefWidth="200"/>
+    </HBox>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Confirmar contraseña:" prefWidth="170"/>
+        <PasswordField fx:id="txtPasswordConfirmar" prefWidth="200"/>
+    </HBox>
+
+    <Label fx:id="lblMensaje" wrapText="true"/>
+
+    <Button text="Actualizar contraseña" onAction="#cambiarPassword"
+            style="-fx-background-color: #1A3A5C; -fx-text-fill: white;
+                   -fx-font-weight: bold; -fx-pref-width: 200;"/>
 </VBox>
